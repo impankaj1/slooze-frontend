@@ -2,6 +2,11 @@
 
 A full-stack restaurant management system built with Next.js, TypeScript, and Node.js.
 
+## Live Demo
+
+- Frontend: [https://slooze-frontend.vercel.app/](https://slooze-frontend.vercel.app/) (Deployed on Vercel)
+- Backend: [https://slooze-backend-production.up.railway.app/](https://slooze-backend-production.up.railway.app/) (Deployed on Railway)
+
 ## Project Structure
 
 This project consists of two main parts:
@@ -97,6 +102,13 @@ npm run dev
 ```
 http://localhost:3000
 ```
+
+## Deployment
+
+This project is deployed on two different platforms:
+
+- Frontend: Deployed on Vercel for optimal performance and easy integration with Next.js
+- Backend: Deployed on Railway for reliable server hosting and easy scaling
 
 ## Features
 
