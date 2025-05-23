@@ -23,7 +23,7 @@ const UserDetailsPage = () => {
       const res = await axiosInstance.get(
         `${BACKEND_BASE_URL}/users/${userId}`
       );
-      setUser(res.data);
+      setUser(res.data.user);
       setLoading(false);
     } catch (error) {
       toast.error("Error occurred while fetching user");

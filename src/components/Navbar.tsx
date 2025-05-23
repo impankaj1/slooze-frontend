@@ -7,17 +7,16 @@ import {
   LogOut,
   LogIn,
   UserPlus,
-  Home,
-  Briefcase,
   User,
   Menu,
   ShoppingCart,
+  List,
 } from "lucide-react";
 import { ModeToggle } from "@/components/ThemeToggle";
 import { useCartStore, useUserStore } from "@/lib/store";
 import axiosInstance from "@/lib/axiosInstance";
 import { toast } from "react-toastify";
-import { removeAccessToken } from "@/helpers";
+import { accessToken, removeAccessToken } from "@/helpers";
 import { BACKEND_BASE_URL } from "@/helpers";
 import {
   Sheet,
@@ -38,13 +37,12 @@ const Navbar = () => {
 
   const pathname = usePathname();
   const isCheckoutPage = pathname === "/checkout";
-  const cartItems = useCartStore((state) => state.cart.items);
-  console.log("cartItems", cartItems);
+  const cart = useCartStore((state) => state.cart);
+  const cartItems = cart?.items ?? [];
 
   const handleCartToggle = () => {
     setCartOpen(!cartOpen);
   };
-
   const handleLogout = async () => {
     try {
       await axiosInstance.post(
@@ -58,7 +56,6 @@ const Navbar = () => {
       toast.success("Logged out successfully");
       router.push("/auth/login");
     } catch (error) {
-      console.error("Logout failed:", error);
       toast.error("Failed to logout. Please try again.");
       router.push("/");
     }
@@ -76,7 +73,7 @@ const Navbar = () => {
           <SheetTitle>Menu</SheetTitle>
         </SheetHeader>
         <div className="flex flex-col gap-4 mt-4">
-          {user ? (
+          {user && accessToken ? (
             <>
               <Link href={`/user/${user._id}`} onClick={() => setIsOpen(false)}>
                 <Button variant="ghost" className="w-full justify-start gap-2">
@@ -109,9 +106,10 @@ const Navbar = () => {
               </Link>
             </>
           )}
-          <Button variant="ghost" className="w-full justify-start gap-2">
-            Appearance : <ModeToggle />
-          </Button>
+          <div className="w-full px-4 flex items-center gap-2">
+            <span className="text-base ">Appearance :</span>
+            <ModeToggle />
+          </div>
         </div>
       </SheetContent>
     </Sheet>
@@ -132,9 +130,9 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          {user ? (
+          {user && accessToken ? (
             <>
-              {user.role === Role.ADMIN && (
+              {/* {user.role === Role.ADMIN && (
                 <div>
                   <Link href="/dashboard" className="hidden md:block">
                     <Button variant="ghost" className="gap-2">
@@ -148,8 +146,23 @@ const Navbar = () => {
                     </Button>
                   </Link>
                 </div>
+              )} */}
+              {user.role !== Role.MEMBER && (
+                <div>
+                  <Link href="/orders" className="hidden md:block">
+                    <Button variant="ghost" className="gap-2">
+                      <List className="h-4 w-4" />
+                      Orders
+                    </Button>
+                  </Link>
+                  <Link href="/orders" className="md:hidden">
+                    <Button variant="ghost" size="icon">
+                      <List className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
               )}
-              {!isCheckoutPage && (
+              {user && user.role !== Role.MEMBER && !isCheckoutPage && (
                 <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"

@@ -4,36 +4,25 @@ import { Button } from "@/components/ui/button";
 import { BACKEND_BASE_URL } from "@/helpers";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Restaurant } from "@/types/Restaurant";
 import {
   RestaurantDialog,
   RestaurantFormValues,
 } from "@/components/RestaurantDialog";
 import RestaurantCard from "@/components/RestaurantCard";
-import { useCartStore, useUserStore } from "@/lib/store";
+import { useRestaurantStore, useUserStore } from "@/lib/store";
 import { toast } from "react-toastify";
-import { CartItem } from "@/types/CartItem";
+import axiosInstance from "@/lib/axiosInstance";
 export default function Home() {
   const [addRestaurant, setAddRestaurant] = useState(false);
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+
+  const restaurants = useRestaurantStore((state) => state.restaurants);
+  const setRestaurants = useRestaurantStore((state) => state.setRestaurants);
 
   const fetchRestaurants = async () => {
     const response = await axios
       .get(`${BACKEND_BASE_URL}/restaurants`)
       .then((res) => res.data);
     setRestaurants(response);
-  };
-
-  const setCartItems = useCartStore((state) => state.addToCart);
-
-  const fetchCartItems = async () => {
-    const response = await axios
-      .get(`${BACKEND_BASE_URL}/cart/items`)
-      .then((res) => res.data);
-
-    response.forEach((item: CartItem) => {
-      setCartItems(item);
-    });
   };
 
   const toggleAddRestaurant = () => {
@@ -48,7 +37,7 @@ export default function Home() {
     values: RestaurantFormValues,
     resetForm: () => void
   ) => {
-    const response = await axios
+    const response = await axiosInstance
       .post(`${BACKEND_BASE_URL}/restaurants`, values)
       .then((res) => res.data);
     setRestaurants([...restaurants, response]);

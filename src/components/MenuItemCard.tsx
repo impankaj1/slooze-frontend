@@ -99,7 +99,7 @@ const MenuItemCard = (props: MenuItemsProps) => {
       <p className="text-sm text-gray-500">
         Updated At: {formatDate(menuItem.updatedAt)}
       </p>
-      {user && (
+      {user && user.role !== Role.MEMBER && (
         <Button
           className="w-full mt-4"
           onClick={() => handleAddToCart(menuItem)}

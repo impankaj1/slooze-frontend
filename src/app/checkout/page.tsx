@@ -2,16 +2,25 @@
 
 import CartItemCard from "@/components/CartItemCard";
 import { Button } from "@/components/ui/button";
+import { BACKEND_BASE_URL } from "@/helpers";
 import axiosInstance from "@/lib/axiosInstance";
-import { useCartStore, useUserStore } from "@/lib/store";
+import {
+  useCartStore,
+  useOrderStore,
+  usePaymentStore,
+  useUserStore,
+} from "@/lib/store";
+import { Order } from "@/types/OrderItem";
 import { OrderStatus } from "@/types/OrderStatus";
+import { Payment } from "@/types/Payment";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 const CheckoutPage = () => {
   const cartItems = useCartStore((state) => state.cart.items);
+  const totalCartPrice = useCartStore((state) => state.cart.totalPrice);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-
+  const setCart = useCartStore((state) => state.setCart);
   const router = useRouter();
   const user = useUserStore((state) => state.user);
 
@@ -25,18 +34,23 @@ const CheckoutPage = () => {
     setShowConfirmDialog(!showConfirmDialog);
   };
 
-  const totalCartPrice = cartItems.reduce(
-    (acc, item) => acc + item.itemTotalPrice,
-    0
-  );
+  const clearCart = async () => {
+    const res = await axiosInstance.delete(`${BACKEND_BASE_URL}/cart`);
+    if (res.status === 200) {
+      setCart({ items: [], totalPrice: 0, userId: user?._id || "" });
+    }
+  };
 
-  const createOrder = async () => {
+  const createOrder = async (): Promise<{
+    order: Order | null;
+    payments: Payment[];
+  }> => {
     if (!user) {
       toast.error("Please login to create an order");
-      return;
+      return { order: null, payments: [] };
     }
-    const res = await axiosInstance
-      .post("/orders", {
+    const res: { order: Order; payments: Payment[] } = await axiosInstance
+      .post(`${BACKEND_BASE_URL}/orders`, {
         items: cartItems,
         totalPrice: totalCartPrice,
         userId: user._id,
@@ -50,9 +64,20 @@ const CheckoutPage = () => {
     return res;
   };
 
+  const orders = useOrderStore((state) => state.orders);
+  const setOrders = useOrderStore((state) => state.setOrders);
+  const setPayments = usePaymentStore((state) => state.setPayments);
+
   const handleConfirmOrder = async () => {
-    const order = await createOrder();
-    console.log(order);
+    const responseData = await createOrder();
+    if (responseData.order) {
+      setOrders([...orders, responseData.order]);
+      clearCart();
+    }
+    if (responseData.payments) {
+      setPayments(responseData.payments);
+    }
+    router.push("/orders");
   };
   return (
     <div className="relative h-[calc(100vh-8rem)] w-full ">
@@ -77,6 +102,7 @@ const CheckoutPage = () => {
         <Button
           className="text-2xl font-bold py-4 px-8"
           disabled={cartItems.length === 0}
+          onClick={handleConfirmOrder}
         >
           Confirm Order
         </Button>

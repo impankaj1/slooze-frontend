@@ -20,7 +20,15 @@ import { Eye, Loader2 } from "lucide-react";
 import axiosInstance from "@/lib/axiosInstance";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/lib/store";
-import { BACKEND_BASE_URL, setAccessToken } from "@/helpers";
+import { accessToken, BACKEND_BASE_URL, setAccessToken } from "@/helpers";
+import { Role } from "@/enums/Roles";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const SignUpPage = () => {
   const formSchema = z.object({
@@ -28,14 +36,15 @@ const SignUpPage = () => {
     email: z.string().email("Please enter a valid email id").nonempty(),
     password: z.string().nonempty().min(8),
     location: z.string().nonempty(),
+    role: z.nativeEnum(Role),
   });
   const router = useRouter();
 
   const user = useUserStore((state) => state.user);
 
   useEffect(() => {
-    if (user) {
-      router.push("/dashboard");
+    if (user && accessToken) {
+      router.push("/");
     }
   }, [user, router]);
 
@@ -50,6 +59,7 @@ const SignUpPage = () => {
       email: "",
       password: "",
       location: "",
+      role: Role.MEMBER,
     },
   });
 
@@ -69,7 +79,7 @@ const SignUpPage = () => {
       form.reset();
       setUser(res.data.user);
       toast.success("User created successfully");
-      router.push(`/dashboard`);
+      router.push(`/`);
     }
     setIsLoading(false);
   };
@@ -116,6 +126,34 @@ const SignUpPage = () => {
                     placeholder="Enter your email here"
                     {...field}
                   />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="role"
+            render={({ field }) => (
+              <FormItem className="text-foreground w-full ">
+                <FormLabel className="text-foreground w-full">Role</FormLabel>
+                <FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger className="text-foreground w-full">
+                      <SelectValue
+                        className="text-foreground"
+                        placeholder="Select a role"
+                      />
+                    </SelectTrigger>
+                    <SelectContent className="text-foreground">
+                      <SelectItem value={Role.ADMIN}>Admin</SelectItem>
+                      <SelectItem value={Role.MANAGER}>Manager</SelectItem>
+                      <SelectItem value={Role.MEMBER}>Member</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>

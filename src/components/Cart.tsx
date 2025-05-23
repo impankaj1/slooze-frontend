@@ -23,7 +23,8 @@ interface CartProps {
 const Cart = (props: CartProps) => {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { isOpen, cartToggle } = props;
-  const cartItems = useCartStore((state) => state.cart.items);
+  const cart = useCartStore((state) => state.cart);
+  const cartItems = cart?.items ?? [];
   const router = useRouter();
 
   const removeFromCart = useCartStore((state) => state.removeFromCart);
@@ -45,8 +46,7 @@ const Cart = (props: CartProps) => {
   const toggleShowConfirmDialog = () => {
     setShowConfirmDialog(!showConfirmDialog);
   };
-  console.log("cartItems", cartItems);
-  const totalCartPrice = useCartStore((state) => state.cart.totalPrice);
+  const totalCartPrice = cart?.totalPrice ?? 0;
 
   const handleCheckout = () => {
     cartToggle();

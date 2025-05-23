@@ -63,7 +63,7 @@ const RestaurantDetails = () => {
     resetForm: () => void
   ) => {
     const price = parseFloat(values.price);
-    const response = await axios.post(
+    const response = await axiosInstance.post(
       `${BACKEND_BASE_URL}/menu-items/restaurant/${restaurantId}`,
       { ...values, price }
     );

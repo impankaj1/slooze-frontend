@@ -59,7 +59,7 @@ const LoginPage = () => {
       setAccessToken(res.data.token);
       setUser(res.data.user);
       form.reset();
-      router.push(`/dashboard`);
+      router.push(`/`);
       toast.success("Login successful");
     }
   }

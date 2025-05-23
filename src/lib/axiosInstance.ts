@@ -1,5 +1,6 @@
 import {
   accessToken,
+  BACKEND_BASE_URL,
   getAccessToken,
   removeAccessToken,
   setAccessToken,
@@ -60,7 +61,7 @@ axiosInstance.interceptors.response.use(
 
     try {
       const response = await axiosInstance.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-token`,
+        `${BACKEND_BASE_URL}/auth/refresh`,
         {},
         { withCredentials: true }
       );
@@ -77,7 +78,7 @@ axiosInstance.interceptors.response.use(
     } catch (error) {
       processQueue(error, null);
       removeAccessToken();
-      window.location.href = "/auth/login";
+      // window.location.href = "/auth/login";
       return Promise.reject(error);
     } finally {
       isRefreshingToken = false;
