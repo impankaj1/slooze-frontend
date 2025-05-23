@@ -1,36 +1,141 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Slooze - Restaurant Management System
 
-## Getting Started
+A full-stack restaurant management system built with Next.js, TypeScript, and Node.js.
 
-First, run the development server:
+## Project Structure
+
+This project consists of two main parts:
+
+- Frontend: Next.js application
+- Backend: Node.js/Express API
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- Node.js (v16 or higher)
+- npm (v7 or higher)
+- MongoDB (local or Atlas)
+
+## Setup Instructions
+
+### Frontend Setup
+
+1. Clone the frontend repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/impankaj1/slooze-frontend.git
+cd slooze-frontend
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Set up environment variables:
 
-## Learn More
+```bash
+cp .env.example .env
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. Add the following to your `.env` file:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```env
+NEXT_PUBLIC_BACKEND_URL=http://localhost:8080
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Backend Setup
 
-## Deploy on Vercel
+1. Clone the backend repository:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+git clone https://github.com/impankaj1/slooze-backend.git
+cd slooze-backend
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Set up environment variables:
+
+```bash
+cp .env.example .env
+```
+
+4. Add the following to your `.env` file:
+
+```env
+PORT=8080
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+REFRESH_SECRET=your_refresh_secret
+```
+
+## Running the Application
+
+1. Start the backend server:
+
+```bash
+cd slooze-backend
+npm run dev
+```
+
+2. In a new terminal, start the frontend development server:
+
+```bash
+cd slooze-frontend
+npm run dev
+```
+
+3. Open your browser and navigate to:
+
+```
+http://localhost:3000
+```
+
+## Features
+
+- User Authentication (Login/Signup)
+- Restaurant Management
+- Menu Item Management
+- Order Management
+- Cart Functionality
+- Payment Integration
+- Role-based Access Control
+
+## Tech Stack
+
+### Frontend
+
+- Next.js
+- TypeScript
+- Tailwind CSS
+- Zustand (State Management)
+- Axios
+- React Query
+
+### Backend
+
+- Node.js
+- Express
+- TypeScript
+- MongoDB
+- JWT Authentication
+- Mongoose
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the my License.
