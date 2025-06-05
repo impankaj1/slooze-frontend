@@ -17,7 +17,7 @@ import { z } from "zod";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { useUserStore } from "@/lib/store";
+import { useCartStore, useUserStore } from "@/lib/store";
 import axiosInstance from "@/lib/axiosInstance";
 import { accessToken, BACKEND_BASE_URL, setAccessToken } from "@/helpers";
 
@@ -38,6 +38,7 @@ const LoginPage = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const setUser = useUserStore((state) => state.setUser);
+  const setCart = useCartStore((state) => state.setCart);
   const user = useUserStore((state) => state.user);
 
   useEffect(() => {
@@ -58,6 +59,7 @@ const LoginPage = () => {
     if (res?.status === 200) {
       setAccessToken(res.data.token);
       setUser(res.data.user);
+      setCart(res.data.cart);
       form.reset();
       router.push(`/`);
       toast.success("Login successful");

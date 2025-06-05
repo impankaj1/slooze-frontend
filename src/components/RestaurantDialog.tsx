@@ -25,11 +25,19 @@ import {
 import { Textarea } from "./ui/textarea";
 import { Loader2 } from "lucide-react";
 import { Restaurant } from "@/types/Restaurant";
+import { Countries } from "@/enums/Countries";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 const formSchema = z.object({
   name: z.string().nonempty(),
   description: z.string().nonempty(),
-  location: z.string().nonempty(),
+  country: z.nativeEnum(Countries),
   menuItemIds: z.array(z.string()),
 });
 
@@ -65,7 +73,7 @@ export function RestaurantDialog(props: RestaurantDialogProps) {
     defaultValues: {
       name: restaurant?.name || "",
       description: restaurant?.description || "",
-      location: restaurant?.location || "",
+      country: (restaurant?.country as Countries) || Countries.US,
       menuItemIds: restaurant?.menuItemIds || [],
     },
   });
@@ -101,9 +109,6 @@ export function RestaurantDialog(props: RestaurantDialogProps) {
       open={isAddRestaurantDialogOpen}
       onOpenChange={setIsAddRestaurantDialogOpen}
     >
-      <DialogTrigger asChild>
-        <Button variant="outline">Add Restaurant</Button>
-      </DialogTrigger>
       <DialogContent className="sm:max-w-1/2">
         <DialogHeader>
           <DialogTitle>Add Restaurant</DialogTitle>
@@ -149,16 +154,26 @@ export function RestaurantDialog(props: RestaurantDialogProps) {
             />
             <FormField
               control={form.control}
-              name="location"
+              name="country"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground">Location</FormLabel>
+                  <FormLabel className="text-foreground">Country</FormLabel>
                   <FormControl>
-                    <Input
-                      className="text-foreground"
-                      placeholder="Enter the job location"
-                      {...field}
-                    />
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger className="text-foreground w-full">
+                        <SelectValue placeholder="Select a country" />
+                      </SelectTrigger>
+                      <SelectContent className="text-foreground">
+                        {Object.entries(Countries).map(([code, name]) => (
+                          <SelectItem key={code} value={name}>
+                            {name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

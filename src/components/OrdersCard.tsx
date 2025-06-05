@@ -20,6 +20,11 @@ const OrdersCard = (props: OrdersCardProps) => {
   const toggleShowConfirmDialog = () => {
     setShowConfirmDialog(!showConfirmDialog);
   };
+
+  const orderPayments = payments.filter(
+    (payment) => payment.orderId === order._id
+  );
+
   return (
     <div className="rounded-md py-4 px-2 w-full outline">
       <div className="flex justify-between">
@@ -52,11 +57,16 @@ const OrdersCard = (props: OrdersCardProps) => {
           <OrderItemsCard key={item.menuItem._id} item={item} />
         ))}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-        {payments.map((payment) => (
-          <PaymentCard key={payment._id} payment={payment} />
-        ))}
-      </div>
+      {orderPayments.length > 0 && (
+        <div className="mt-4">
+          <h2 className="text-lg font-bold px-2 mb-2">Payments:</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+            {orderPayments.map((payment) => (
+              <PaymentCard key={payment._id} payment={payment} />
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="text-xl font-bold flex justify-end">
         Total Price: {order.totalPrice}

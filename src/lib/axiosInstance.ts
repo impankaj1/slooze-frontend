@@ -78,7 +78,7 @@ axiosInstance.interceptors.response.use(
     } catch (error) {
       processQueue(error, null);
       removeAccessToken();
-      // window.location.href = "/auth/login";
+      window.location.href = "/auth/login";
       return Promise.reject(error);
     } finally {
       isRefreshingToken = false;

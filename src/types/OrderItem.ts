@@ -6,7 +6,8 @@ export interface Order {
   userId: string;
   totalPrice: number;
   status: OrderStatus;
+  country: string;
   _id: string;
   createdAt: Date;
   updatedAt: Date;
-}   
+}

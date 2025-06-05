@@ -96,7 +96,7 @@ const RestaurantDetails = () => {
               Description : {restaurant?.description}
             </h1>
             <h1 className="text-xl font-semibold text-gray-500">
-              Address : {restaurant?.location}
+              Address : {restaurant?.country}
             </h1>
           </div>
           <div className="flex flex-col gap-4">

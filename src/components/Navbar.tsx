@@ -34,11 +34,14 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const [cartOpen, setCartOpen] = useState(false);
+  const setCart = useCartStore((state) => state.setCart);
 
   const pathname = usePathname();
   const isCheckoutPage = pathname === "/checkout";
   const cart = useCartStore((state) => state.cart);
-  const cartItems = cart?.items ?? [];
+  const cartItems = Array.isArray(cart)
+    ? cart.flatMap((cart) => cart.items)
+    : cart?.items ?? [];
 
   const handleCartToggle = () => {
     setCartOpen(!cartOpen);
@@ -51,8 +54,16 @@ const Navbar = () => {
         { withCredentials: true }
       );
 
+      setCart({
+        items: [],
+        totalPrice: 0,
+        userId: "",
+        country: "",
+      });
+
       removeAccessToken();
       setIsOpen(false);
+
       toast.success("Logged out successfully");
       router.push("/auth/login");
     } catch (error) {
@@ -60,7 +71,7 @@ const Navbar = () => {
       router.push("/");
     }
   };
-
+  console.log("cartItems", cartItems);
   const MobileMenu = () => (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
@@ -231,7 +242,11 @@ const Navbar = () => {
           <MobileMenu />
         </div>
       </div>
-      <Cart isOpen={cartOpen} cartToggle={handleCartToggle} />
+      <Cart
+        cartItems={cartItems}
+        isOpen={cartOpen}
+        cartToggle={handleCartToggle}
+      />
     </nav>
   );
 };

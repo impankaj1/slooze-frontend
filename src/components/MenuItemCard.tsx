@@ -55,22 +55,22 @@ const MenuItemCard = (props: MenuItemsProps) => {
     };
     const res = await axiosInstance
       .post(`${BACKEND_BASE_URL}/cart/items`, data)
-      .then((res) => res)
+      .then((res) => res.data)
       .catch((err) => {
         toast.error("Error adding item to cart");
         return err;
       });
 
-    if (res.status === 200) {
+    if (res && res.items) {
       toast.success("Item added to cart");
-      addToCard(data);
+      addToCard(res);
     }
 
     return res;
   };
 
   const handleAddToCart = async (menuItem: MenuItem) => {
-    const res = await addItemToCart(menuItem);
+    await addItemToCart(menuItem);
   };
   return (
     <div className="border-2 border-gray-300 rounded-md p-4 shadow-md  hover:shadow-2xl hover:scale-101 ease-in-out duration-300 transition-shadow">

@@ -15,6 +15,7 @@ export interface Cart {
   totalPrice: number;
   _id?: string;
   userId: string;
+  country: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

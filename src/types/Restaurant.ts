@@ -3,7 +3,7 @@ export interface Restaurant {
   name: string;
   description: string;
   menuItemIds: string[];
-  location: string;
+  country: string;
   createdAt: Date;
   updatedAt: Date;
 }

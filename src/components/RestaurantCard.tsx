@@ -20,7 +20,7 @@ const RestaurantCard = ({ restaurant }: RestaurantProps) => {
             {restaurant.name}
           </h2>
         </div>
-        <p className="text-gray-400">{restaurant.location}</p>
+        <p className="text-gray-400">{restaurant.country}</p>
         <div className="flex flex-col justify-between gap-2">
           <p className="">{restaurant.description}</p>
         </div>

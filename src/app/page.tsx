@@ -19,7 +19,7 @@ export default function Home() {
   const setRestaurants = useRestaurantStore((state) => state.setRestaurants);
 
   const fetchRestaurants = async () => {
-    const response = await axios
+    const response = await axiosInstance
       .get(`${BACKEND_BASE_URL}/restaurants`)
       .then((res) => res.data);
     setRestaurants(response);

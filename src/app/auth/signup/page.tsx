@@ -29,13 +29,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Countries } from "@/enums/Countries";
 
 const SignUpPage = () => {
   const formSchema = z.object({
     name: z.string().nonempty(),
     email: z.string().email("Please enter a valid email id").nonempty(),
     password: z.string().nonempty().min(8),
-    location: z.string().nonempty(),
+    country: z.nativeEnum(Countries),
     role: z.nativeEnum(Role),
   });
   const router = useRouter();
@@ -58,7 +59,7 @@ const SignUpPage = () => {
       name: "",
       email: "",
       password: "",
-      location: "",
+      country: Countries.IN,
       role: Role.MEMBER,
     },
   });
@@ -89,7 +90,7 @@ const SignUpPage = () => {
   const handlePasswordTypeChange = () => setShowPassword(!showPassword);
 
   return (
-    <div className="flex h-[100vh] overflow-y-hidden flex-col items-center justify-center ">
+    <div className="flex h-full  flex-col items-center overflow-y-scroll scroll-auto justify-center ">
       <h1 className="font-bold text-2xl">Create your new account</h1>
       <Form {...form}>
         <form
@@ -189,16 +190,31 @@ const SignUpPage = () => {
 
           <FormField
             control={form.control}
-            name="location"
+            name="country"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-foreground">Location</FormLabel>
+              <FormItem className="text-foreground w-full ">
+                <FormLabel className="text-foreground w-full">
+                  Country
+                </FormLabel>
                 <FormControl>
-                  <Input
-                    className="text-foreground"
-                    placeholder="Enter your location here"
-                    {...field}
-                  />
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger className="text-foreground w-full">
+                      <SelectValue
+                        className="text-foreground"
+                        placeholder="Select a role"
+                      />
+                    </SelectTrigger>
+                    <SelectContent className="text-foreground">
+                      {Object.entries(Countries).map(([code, name]) => (
+                        <SelectItem key={code} value={code}>
+                          {name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>

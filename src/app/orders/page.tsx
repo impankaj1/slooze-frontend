@@ -11,6 +11,8 @@ import { useEffect } from "react";
 import { OrderStatus } from "@/types/OrderStatus";
 import OrdersCard from "@/components/OrdersCard";
 import { toast } from "react-toastify";
+import { Order } from "@/types/OrderItem";
+import { Separator } from "@/components/ui/separator";
 
 const OrdersPage = () => {
   const payments = usePaymentStore((state) => state.payments);
@@ -56,19 +58,44 @@ const OrdersPage = () => {
     fetchOrders();
   }, []);
 
+  const ordersByCountry = orders.reduce((acc, order) => {
+    const country = order.country || "Unknown";
+    if (!acc[country]) {
+      acc[country] = [];
+    }
+    acc[country].push(order);
+    return acc;
+  }, {} as Record<string, Order[]>);
+
   return (
     <div className="w-full h-full">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Orders</h1>
       </div>
-      {orders.map((order) => (
-        <OrdersCard
-          key={order._id}
-          order={order}
-          payments={payments}
-          handleCancelOrder={handleCancelOrder}
-        />
-      ))}
+      <div className="space-y-8">
+        {Object.entries(ordersByCountry).map(
+          ([country, countryOrders], index) => (
+            <div key={country}>
+              <h2 className="text-xl font-semibold mb-4">
+                Orders for {country}
+              </h2>
+              <div className="space-y-4">
+                {countryOrders.map((order) => (
+                  <OrdersCard
+                    key={order._id}
+                    order={order}
+                    payments={payments}
+                    handleCancelOrder={handleCancelOrder}
+                  />
+                ))}
+              </div>
+              {index < Object.keys(ordersByCountry).length - 1 && (
+                <Separator className="my-6" />
+              )}
+            </div>
+          )
+        )}
+      </div>
     </div>
   );
 };

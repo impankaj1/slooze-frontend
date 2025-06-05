@@ -88,8 +88,8 @@ const UserDetailsPage = () => {
             <p className="text-sm text-gray-500 capitalize">{user?.role}</p>
           </div>
           <div className="flex flex-col gap-2">
-            <h2 className="text-lg font-medium">Location</h2>
-            <p className="text-sm text-gray-500">{user?.location}</p>
+            <h2 className="text-lg font-medium">Country</h2>
+            <p className="text-sm text-gray-500">{user?.country}</p>
           </div>
           <div className="flex flex-col gap-2">
             <h2 className="text-lg font-medium">Created At</h2>

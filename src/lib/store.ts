@@ -21,66 +21,72 @@ export const useUserStore = create<UserStore>((set) => ({
 }));
 
 interface CartStore {
-  cart: Cart;
-  addToCart: (item: CartItem) => void;
+  cart: Cart | Cart[];
+  addToCart: (cart: Cart) => void;
   removeFromCart: (itemId: string) => void;
   addQuantity: (itemId: string) => void;
   removeQuantity: (itemId: string) => void;
-  setCart: (cart: Cart) => void;
+  setCart: (cart: Cart | Cart[]) => void;
 }
 
 const initialCartState: Cart = {
   items: [],
   totalPrice: 0,
   userId: "",
+  country: "",
 };
 
 export const useCartStore = create<CartStore>((set) => ({
   cart: initialCartState,
-  setCart: (cart: Cart) => set({ cart }),
-  addToCart: (item: CartItem) =>
+  setCart: (cart: Cart | Cart[]) => set({ cart }),
+  addToCart: (cart: Cart) =>
     set((state) => {
-      const existingItem = state.cart?.items.find(
-        (cartItem) => cartItem.menuItem._id === item.menuItem._id
-      );
-      if (existingItem) {
-        return {
-          cart: {
-            ...state.cart,
-            items: state.cart.items.map((cartItem) =>
-              cartItem.menuItem._id === item.menuItem._id
-                ? {
-                    ...cartItem,
-                    quantity: cartItem.quantity + item.quantity,
-                    itemTotalPrice:
-                      cartItem.itemTotalPrice + item.itemTotalPrice,
-                  }
-                : cartItem
-            ),
-            totalPrice: state.cart.totalPrice + item.itemTotalPrice,
-          },
-        };
+      if (Array.isArray(state.cart)) {
+        const cartIndex = state.cart.findIndex((c) => c.userId === cart.userId);
+        if (cartIndex !== -1) {
+          const updatedCarts = [...state.cart];
+          updatedCarts[cartIndex] = cart;
+          return { cart: updatedCarts };
+        }
+
+        return { cart: [...state.cart, cart] };
       }
-      return {
-        cart: {
-          ...state.cart,
-          items: [...state.cart?.items, item],
-          totalPrice: state.cart.totalPrice + item.itemTotalPrice,
-        },
-      };
+
+      return { cart };
     }),
   removeFromCart: (itemId: string) =>
     set((state) => {
-      const itemToRemove = state.cart.items.find(
-        (item) => item.menuItem._id === itemId
-      );
-      const itemTotalPrice = itemToRemove?.itemTotalPrice || 0;
+      if (Array.isArray(state.cart)) {
+        // Handle array of carts
+        const updatedCarts = state.cart.map((cart) => {
+          const itemToRemove = cart.items.find(
+            (item: CartItem) => item.menuItem._id === itemId
+          );
+          if (!itemToRemove) return cart;
 
+          const itemTotalPrice = itemToRemove.itemTotalPrice;
+          return {
+            ...cart,
+            items: cart.items.filter(
+              (item: CartItem) => item.menuItem._id !== itemId
+            ),
+            totalPrice: cart.totalPrice - itemTotalPrice,
+          };
+        });
+        return { cart: updatedCarts };
+      }
+
+      const itemToRemove = state.cart.items.find(
+        (item: CartItem) => item.menuItem._id === itemId
+      );
+      if (!itemToRemove) return state;
+
+      const itemTotalPrice = itemToRemove.itemTotalPrice;
       return {
         cart: {
           ...state.cart,
           items: state.cart.items.filter(
-            (item) => item.menuItem._id !== itemId
+            (item: CartItem) => item.menuItem._id !== itemId
           ),
           totalPrice: state.cart.totalPrice - itemTotalPrice,
         },
@@ -88,14 +94,40 @@ export const useCartStore = create<CartStore>((set) => ({
     }),
   addQuantity: (itemId: string) =>
     set((state) => {
+      if (Array.isArray(state.cart)) {
+        const updatedCarts = state.cart.map((cart) => {
+          const item = cart.items.find(
+            (item: CartItem) => item.menuItem._id === itemId
+          );
+          if (!item) return cart;
+
+          return {
+            ...cart,
+            items: cart.items.map((item: CartItem) =>
+              item.menuItem._id === itemId
+                ? {
+                    ...item,
+                    quantity: item.quantity + 1,
+                    itemTotalPrice:
+                      item.itemTotalPrice + Number(item.menuItem.price),
+                  }
+                : item
+            ),
+            totalPrice: cart.totalPrice + Number(item.menuItem.price),
+          };
+        });
+        return { cart: updatedCarts };
+      }
+
       const item = state.cart.items.find(
-        (item) => item.menuItem._id === itemId
+        (item: CartItem) => item.menuItem._id === itemId
       );
       if (!item) return state;
+
       return {
         cart: {
           ...state.cart,
-          items: state.cart.items.map((item) =>
+          items: state.cart.items.map((item: CartItem) =>
             item.menuItem._id === itemId
               ? {
                   ...item,
@@ -111,13 +143,40 @@ export const useCartStore = create<CartStore>((set) => ({
     }),
   removeQuantity: (itemId: string) =>
     set((state) => {
+      if (Array.isArray(state.cart)) {
+        const updatedCarts = state.cart.map((cart) => {
+          const item = cart.items.find(
+            (item: CartItem) => item.menuItem._id === itemId
+          );
+          if (!item) return cart;
+
+          return {
+            ...cart,
+            items: cart.items.map((item: CartItem) =>
+              item.menuItem._id === itemId
+                ? {
+                    ...item,
+                    quantity: item.quantity - 1,
+                    itemTotalPrice:
+                      item.itemTotalPrice - Number(item.menuItem.price),
+                  }
+                : item
+            ),
+            totalPrice: cart.totalPrice - Number(item.menuItem.price),
+          };
+        });
+        return { cart: updatedCarts };
+      }
+
+      // Handle single cart
       const item = state.cart.items.find(
-        (item) => item.menuItem._id === itemId
+        (item: CartItem) => item.menuItem._id === itemId
       );
       if (!item) return state;
+
       const updatedCart: Cart = {
         ...state.cart,
-        items: state.cart.items.map((item) =>
+        items: state.cart.items.map((item: CartItem) =>
           item.menuItem._id === itemId
             ? {
                 ...item,
