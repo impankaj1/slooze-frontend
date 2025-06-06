@@ -209,7 +209,7 @@ const SignUpPage = () => {
                     </SelectTrigger>
                     <SelectContent className="text-foreground">
                       {Object.entries(Countries).map(([code, name]) => (
-                        <SelectItem key={code} value={code}>
+                        <SelectItem key={code} value={name}>
                           {name}
                         </SelectItem>
                       ))}
